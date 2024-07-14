@@ -1,0 +1,14 @@
+- name: Conditionals playbook
+  hosts: all
+  become: true
+  tasks:
+    - name: Set the swappiness value
+      sysctl:
+        name: vm.swappiness
+        value: '10'
+        state: present
+      when: ansible_memtotal_mb > 2048
+    - name: Display error message if RAM is less than 2048MB
+      debug:
+        msg: "Error: The server has less than 2048MB of RAM. Unable to set vm.swappiness." 
+      when: ansible_memtotal_mb < 2048

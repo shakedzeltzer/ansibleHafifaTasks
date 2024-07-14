@@ -1,0 +1,9 @@
+- name: Gather facts from all hosts
+  hosts: all
+  tasks:
+    - name: Set custom facts based on conditions
+      set_fact:
+        server_role: "mysql"
+    - name: Display custom fact
+      debug:
+        var: server_role

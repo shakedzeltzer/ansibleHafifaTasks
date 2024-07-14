@@ -1,0 +1,5 @@
+- name: Run haproxy playbook
+  hosts: webservers
+  become: true
+  roles:
+    - geerlingguy.haproxy 

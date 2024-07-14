@@ -1,0 +1,6 @@
+#!/bin/bash
+USERNAME=automation
+PASSWORD=devops
+ansible all -u vagrant -m user -a "name=$USERNAME password={{ 'devops' | password_hash('sha512') }} state=present" --ask-pass --become
+ansible all -m authorized_key -a "user=automation key='{{ lookup('file', '/home/vagrant/.ssh/id_rsa.pub') }}'" --ask-pass
+ansible all -u vagrant -m lineinfile -a "path=/etc/sudoers line='automation      ALL=(ALL)       NOPASSWD: ALL' state=present" --ask-pass --become

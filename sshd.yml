@@ -1,0 +1,20 @@
+- name: Configure sshd config file
+  hosts: all
+  become: true
+  tasks:
+  - name: Disable X11Forwarding in the sshd config file
+    replace:
+        path: /etc/ssh/sshd_config
+        regexp: '.*X11Forwarding.*'
+        replace: 'X11Forwarding no'      
+  - name: Set MaxAuthTries to 3
+    replace:
+        path: /etc/ssh/sshd_config
+        regexp: '.*MaxAuthTries.*'
+        replace: 'MaxAuthTries 3'
+  
+  - name: Set Banner to /etc/motd
+    replace:
+        path: /etc/ssh/sshd_config
+        regexp: '.*Banner.*'
+        replace: 'Banner /etc/motd'

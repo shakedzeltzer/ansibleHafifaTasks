@@ -1,0 +1,53 @@
+- name: Create webservers users
+  hosts: webservers
+  become: true
+  vars_files:
+    - /home/vagrant/plays/vars/user_list.yml
+    - /home/vagrant/plays/secret.yml
+  vars:
+    loopItems: "{{ users }}"
+    condition: "item.uid | string | regex_search('^1.*')"
+
+  tasks:
+    - name: Create users that their uuid starts with 1 for the webservers host
+      loop: "{{ loopItems }}"
+      when: "condition | bool"
+      user:
+        name: "{{ item.username | string }}"
+        password: "{{user_password | password_hash }}"
+        state: present
+        shell: /bin/bash
+        groups: wheel
+    - name: Copy ssh key to remote users
+      loop: "{{ loopItems }}"
+      when: "condition | bool"
+      authorized_key: 
+        user: "{{ item.username | string }}"
+        key: "{{ lookup('file', '/home/vagrant/.ssh/id_rsa.pub') }}"
+
+
+- name: Create database users
+  hosts: database
+  become: true
+  vars_files:
+    - /home/vagrant/plays/vars/user_list.yml
+    - /home/vagrant/plays/secret.yml
+  vars:
+    loopItems: "{{ users }}"
+    condition: "item.uid | string | regex_search('^2.*')"
+  tasks:
+    - name: Create users that their uuid starts with 2 for the webservers host
+      loop: "{{loopItems}}"
+      when: "condition | bool"
+      user:
+        name: "{{ item.username | string }}"
+        password: "{{ database_password | password_hash }}"
+        state: present
+        shell: /bin/bash
+        groups: wheel
+    - name: Copy ssh key to remote users
+      loop: "{{loopItems}}"
+      when: "condition | bool"
+      authorized_key: 
+        user: "{{ item.username | string }}"
+        key: "{{ lookup('file', '/home/vagrant/.ssh/id_rsa.pub') }}"

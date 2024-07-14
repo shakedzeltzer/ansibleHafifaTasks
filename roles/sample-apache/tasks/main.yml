@@ -1,0 +1,31 @@
+- name: Install the httpd, mod_ssl, php package
+  yum:
+    name: "{{ item }}"
+    state: present
+  loop: 
+    - httpd
+    - mod_ssl
+    - php
+- name: Enable Apache service on boot
+  systemd:
+    name: httpd
+    enabled: yes
+    state: started
+- name: Allow all incoming traffic on HTTP port TCP 80
+  firewalld:
+    port: 80/tcp
+    state: enabled
+    permanent: yes
+- name: Allow all incoming traffic on HTTPS port TCP 443
+  firewalld:
+    port: 443/tcp
+    state: enabled
+    permanent: yes
+- name: Template a file to /var/www/html/index.html
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+    owner: automation
+    group: automation
+    mode: '0644'
+  notify: Restart service

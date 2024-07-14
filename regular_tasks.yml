@@ -1,0 +1,12 @@
+- name: Add date log crontab
+  hosts: proxy
+  become: true
+  tasks:
+    - name: Create a cronjob as a root user 
+      cron:
+        name: "Log date every hour"
+        minute: "0"
+        hour: "*"
+        job: "date >> /var/log/time.log"
+        user: root
+        state: present

@@ -1,0 +1,26 @@
+- name: Replace proxy motd
+  hosts: proxy
+  tasks:
+  - name: Write "Welcome to HAProxy server" to the mtd file
+    become: true
+    copy:
+      content: "Welcome to HAProxy server"
+      dest: /etc/motd
+
+- name: Replace webservers motd
+  hosts: webservers
+  tasks:
+  - name: Write "Welcome to Apache server" to the mtd file
+    become: true
+    copy:
+      content: "Welcome to Apache server"
+      dest: /etc/motd
+
+- name: Replace database motd
+  hosts: database
+  tasks:
+  - name: Write "Welcome to MySQL server" to the mtd file
+    become: true   
+    copy:
+      content: "Welcome to MySQL server"
+      dest: /etc/motd

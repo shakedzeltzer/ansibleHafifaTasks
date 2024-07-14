@@ -1,0 +1,5 @@
+- name: Run mariadb server playbook
+  hosts: database
+  become: true
+  roles:
+    - sample-mysql
