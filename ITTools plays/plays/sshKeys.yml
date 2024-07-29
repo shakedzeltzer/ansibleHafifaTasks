@@ -1,0 +1,11 @@
+- name: Copy ssh keys to all remote vms
+  hosts: all
+  become: true
+  vars_files:
+    - secret.yml
+  tasks:
+    - name: Copy ssh key to remote users
+      authorized_key:
+        user: "vagrant"
+        key: "{{ lookup('file', '/home/vagrant/.ssh/id_rsa.pub') }}"
+
