@@ -1,0 +1,36 @@
+- name: Uninstall httpd and remove related files
+  hosts: haproxy
+  become: yes  # Use 'become' to run tasks with elevated privileges
+  tasks:
+    - name: Stop the httpd service
+      service:
+        name: httpd
+        state: stopped
+      ignore_errors: yes  # Continue even if httpd service is not found
+
+    - name: Disable the httpd service
+      service:
+        name: httpd
+        enabled: no
+      ignore_errors: yes  # Continue even if httpd service is not found
+
+    - name: Remove httpd package
+      yum:
+        name: httpd
+        state: absent
+
+    - name: Remove httpd configuration files
+      file:
+        path: "{{ item }}"
+        state: absent
+      loop:
+        - /etc/httpd
+        - /var/www/html
+        - /var/log/httpd
+      ignore_errors: yes  # Continue even if paths are not found
+
+    - name: Remove httpd user and group
+      user:
+        name: apache
+        state: absent
+      ignore_errors: yes

@@ -1,0 +1,21 @@
+- name: Setup HAProxy
+  hosts: haproxy
+  become: yes
+  tasks:
+  - name: Install HAProxy
+    package:
+      name: https://github.com/philyuchkoff/HAProxy-2-RPM-builder/releases/download/2.9.9/haproxy-2.9.9-1.el7.x86_64.rpm
+      state: present
+    
+  - name: Deploy HAProxy configuration
+    template:
+      src: haproxy.cfg.j2
+      dest: /etc/haproxy/haproxy.cfg
+    notify:
+      - Restart HAProxy
+
+  handlers:
+    - name: Restart HAProxy
+      service:
+        name: haproxy
+        state: restarted
